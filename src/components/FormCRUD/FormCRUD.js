@@ -1,7 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import styles from "./FormCRUD.module.scss"
 import useInput from "../../hooks/useInput";
-import {getDatabase, ref, set, child, update, remove} from "firebase/database";
+
+import {
+  doc,
+  onSnapshot,
+  updateDoc,
+  setDoc,
+  deleteDoc,
+  collection,
+  serverTimestamp,
+  getDoc,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 import {db} from "../../firebaseConfig/fireBaseConfig";
 
 
@@ -14,54 +29,160 @@ const FormCRUD = () => {
   const userGender = useInput("Male");
 
   const [data, setData] = useState(null);
-  const arrInputs = [userName, userLastName, userAddress, userEmail, userGender]
 
-useEffect(()=>{
 
-  console.log("Захожу")
-  set(ref(db, "TheUsers/"),
-    {
-      NameOfStd: userName.value + " " + userLastName.value,
-      userAddress: userAddress.value,
-      userEmail: userEmail.value,
-      userGender: userGender.value,
-    })
-    .then(() => {
-      alert("Даные сохранены!");
-    })
-    .catch(error => {
-      alert("unsuccessful,error" + error);
-    })
-  console.log("выхожу")
-},[data])
+  const arrInputs = [userName, userLastName, userAddress, userEmail, userGender];
+
+  const userCollectionRef = collection(db, "users");
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(userCollectionRef);
+      setData(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+    }
+
+    getUsers()
+      .catch(error => {
+        alert("unsuccessful,error" + error);
+        console.log(error)
+      });
+
+  }, []);
+  // const createUser = async () =>{
+  //   await addDoc(userCollectionRef,{
+  //     userName: userName.value + " " + userLastName.value,
+  //     userAddress: userAddress.value,
+  //     userEmail: userEmail.value,
+  //     userGender: userGender.value,
+  //   });
+  // }
+
+
+  //ONE TIME GET FUNCTION
+  // useEffect(() => {
+  //   const getSchools = async () => {
+  //     setLoading(true);
+
+  //     const querySnapshot = await getDocs(dbRef);
+  //     const items = [];
+
+  //     querySnapshot.forEach((doc) => {
+  //       items.push(doc.data());
+  //     });
+  //     setSchools(items);
+  //     setLoading(false);
+  //   };
+
+  //   try {
+  //     getSchools();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+
+  //   // eslint-disable-next-line
+  // }, []);
+
+
+  //REALTIME GET FUNCTION
+  // useEffect(() => {
+  // const q = query(
+  //   colletionRef,
+  //  where('owner', '==', currentUserId),
+  // where('title', '==', 'School1') // does not need index
+  //  where('score', '<=', 100) // needs index  https://firebase.google.com/docs/firestore/query-data/indexing?authuser=1&hl=en
+  // orderBy('score', 'asc'), // be aware of limitations: https://firebase.google.com/docs/firestore/query-data/order-limit-data#limitations
+  // limit(1)
+  // );
+
+  //   setLoading(true);
+  //   // const unsub = onSnapshot(q, (querySnapshot) => {
+  //   const unsub = onSnapshot(colletionRef, (querySnapshot) => {
+  //     const items = [];
+  //     querySnapshot.forEach((doc) => {
+  //       items.push(doc.data());
+  //     });
+  //     setSchools(items);
+  //     setLoading(false);
+  //   });
+  //   return () => {
+  //     unsub();
+  //   };
+  //
+  //   // eslint-disable-next-line
+  // }, []);
+
+  // ADD FUNCTION
+  // async function addUser() {
+  //   const owner = currentUser ? currentUser.uid : 'unknown';
+  //   const ownerEmail = currentUser ? currentUser.email : 'unknown';
+  //
+  //   const newSchool = {
+  //     title,
+  //     desc,
+  //     score: +score,
+  //     id: uuidv4(),
+  //     owner,
+  //     ownerEmail,
+  //     createdAt: serverTimestamp(),
+  //     lastUpdate: serverTimestamp(),
+  //   };
+  //
+  //   try {
+  //     const schoolRef = doc(colletionRef, newSchool.id);
+  //     await setDoc(schoolRef, newSchool);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  //DELETE FUNCTION
+  // async function deleteSchool(school) {
+  //   try {
+  //     const schoolRef = doc(colletionRef, school.id);
+  //     await deleteDoc(schoolRef, schoolRef);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  // EDIT FUNCTION
+  // async function editSchool(school) {
+  //   const updatedSchool = {
+  //     score: +score,
+  //     lastUpdate: serverTimestamp(),
+  //   };
+  //
+  //   try {
+  //     const schoolRef = doc(colletionRef, school.id);
+  //     updateDoc(schoolRef, updatedSchool);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
 
   //INSERT DATA FUNCTION //
-  const handleInsertData = (e) => {
-    e.preventDefault();
+  // const handleInsertData = (e) => {
+  //   e.preventDefault();
 
-    // set(ref(db, "TheUsers/"),
-    //   {
-    //     NameOfStd: userName.value + " " + userLastName.value,
-    //     userAddress: userAddress.value,
-    //     userEmail: userEmail.value,
-    //     userGender: userGender.value,
-    //   })
-    //   .then(() => {
-    //     alert("Даные сохранены!");
-    //   })
-    //   .catch(error => {
-    //     alert("unsuccessful,error" + error);
-    //   })
+  // set(ref(db, "TheUsers/"),
+  //   {
+  //     NameOfStd: userName.value + " " + userLastName.value,
+  //     userAddress: userAddress.value,
+  //     userEmail: userEmail.value,
+  //     userGender: userGender.value,
+  //   })
+  //   .then(() => {
+  //     alert("Даные сохранены!");
+  //   })
+  //   .catch(error => {
+  //     alert("unsuccessful,error" + error);
+  //   })
 
 
-    setData(`${userName.value} ${userLastName.value} ${userAddress.value} ${userEmail.value} ${userGender.value}`);
-    // arrInputs.forEach(input => input.resetField());
-  }
-
-  const handleSubmitLogout = (e) => {
-    e.preventDefault();
-
-  }
+  //   setData(`${userName.value} ${userLastName.value} ${userAddress.value} ${userEmail.value} ${userGender.value}`);
+  //   // arrInputs.forEach(input => input.resetField());
+  // }
 
 
   return (
@@ -107,14 +228,21 @@ useEffect(()=>{
         <hr/>
 
         <div className={styles.row}>
-          <button onClick={(e) => handleInsertData(e)} className={styles.btnSubmit}>INSERT</button>
-          <button onClick={(e) => handleInsertData(e)} className={styles.btnSubmit}>SELECT</button>
-          <button onClick={(e) => handleInsertData(e)} className={styles.btnSubmit}>UPDATE</button>
-          <button onClick={(e) => handleInsertData(e)} className={styles.btnSubmit}>DELETE</button>
+          <button className={styles.btnSubmit}>INSERT</button>
+          <button className={styles.btnSubmit}>SELECT</button>
+          <button className={styles.btnSubmit}>UPDATE</button>
+          <button className={styles.btnSubmit}>DELETE</button>
         </div>
       </form>
 
-      <p className={styles.isAuth}>{data}</p>
+      <div className={styles.users}>{data && data.map(user => {
+        return (
+          <div key={user.id}>
+            <p>name: {user.name} {user.last} email: {user.email} address: {user.address}</p>
+            <hr/>
+          </div>
+        )
+      })}</div>
 
     </div>
   );
