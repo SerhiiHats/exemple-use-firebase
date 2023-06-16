@@ -11,7 +11,6 @@ export default function useInput (initialValue){
     setValue("");
   }
 
-  console.log(value)
   return {
     value, onChange, resetField
   }

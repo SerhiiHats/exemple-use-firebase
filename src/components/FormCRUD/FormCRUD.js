@@ -16,6 +16,7 @@ import {
   orderBy,
   limit,
   getDocs,
+  addDoc,
 } from "firebase/firestore";
 import {db} from "../../firebaseConfig/fireBaseConfig";
 
@@ -26,12 +27,11 @@ const FormCRUD = () => {
   const userLastName = useInput("");
   const userAddress = useInput("");
   const userEmail = useInput("");
-  const userGender = useInput("Male");
 
   const [data, setData] = useState(null);
+  const [flag, setFlag] = useState(0);
 
-
-  const arrInputs = [userName, userLastName, userAddress, userEmail, userGender];
+  const arrInputs = [userName, userLastName, userAddress, userEmail];
 
   const userCollectionRef = collection(db, "users");
 
@@ -47,15 +47,29 @@ const FormCRUD = () => {
         console.log(error)
       });
 
-  }, []);
-  // const createUser = async () =>{
-  //   await addDoc(userCollectionRef,{
-  //     userName: userName.value + " " + userLastName.value,
-  //     userAddress: userAddress.value,
-  //     userEmail: userEmail.value,
-  //     userGender: userGender.value,
-  //   });
-  // }
+  }, [flag]);
+
+  const createUser = async (e) => {
+    e.preventDefault();
+    console.log("Вход")
+
+    await addDoc(userCollectionRef, {
+      name: userName.value,
+      last: userLastName.value,
+      address: userAddress.value,
+      email: userEmail.value,
+    })
+      .then(() => {
+        alert("Даные сохранены!");
+      })
+      .catch(error => {
+        alert("unsuccessful,error" + error);
+      })
+
+    console.log(`${userName.value} ${userLastName.value} ${userAddress.value} ${userEmail.value}`)
+    console.log("Выход")
+    setFlag(flag + 1);
+  }
 
 
   //ONE TIME GET FUNCTION
@@ -217,18 +231,11 @@ const FormCRUD = () => {
                    placeholder={"Enter your e-mail..."}/>
           </label>
         </div>
-        <div className={styles.row}>
-          <label>Чоловік / Жінка
-            <select value={userGender.value} onChange={userGender.onChange}>
-              <option value={"Male"}> Male</option>
-              <option value={"Female"}> Female</option>
-            </select>
-          </label>
-        </div>
+
         <hr/>
 
         <div className={styles.row}>
-          <button className={styles.btnSubmit}>INSERT</button>
+          <button onClick={(e) => createUser(e)} className={styles.btnSubmit}>CREATE</button>
           <button className={styles.btnSubmit}>SELECT</button>
           <button className={styles.btnSubmit}>UPDATE</button>
           <button className={styles.btnSubmit}>DELETE</button>

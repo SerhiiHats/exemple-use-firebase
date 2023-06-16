@@ -5,7 +5,6 @@ import {getAuth} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyAi3rd4kQHLvHEHR-wZb8aYbV-iJ9S_h6o",
   authDomain: "fir-learn-e0117.firebaseapp.com",
