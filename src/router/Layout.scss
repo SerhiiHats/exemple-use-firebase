@@ -1,0 +1,57 @@
+@import "./src/index";
+
+.layout {
+
+  color: #6e6e6e;
+
+  .header {
+    height: $heightHeader;
+    text-align: center;
+    background-color: $colorBg1;
+    box-sizing: border-box;
+    padding-top: calc($heightHeader / 3);
+  }
+
+  .wrapMain {
+    display: flex;
+
+    .nav {
+      width: $size * 20;
+      background-color: $colorBg0;
+      min-height: calc(100vh - $heightHeader - $heightFooter);
+
+      & > a {
+        color: $colorDefault;
+        margin: $size * 5;
+        font-size: $size * 2;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      & > .active {
+        color: $colorActive2;
+        cursor: default;
+      }
+
+    }
+
+    .main {
+      width: calc(100% - $size * 20);
+      padding: $size * 2;
+      box-sizing: border-box;
+    }
+  }
+
+
+  .footer {
+    height: $heightFooter;
+    text-align: center;
+    background-color: $colorBg1;
+    box-sizing: border-box;
+    padding-top: calc($heightFooter / 3);
+  }
+
+}
