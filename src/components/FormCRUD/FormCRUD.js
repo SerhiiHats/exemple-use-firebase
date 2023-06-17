@@ -29,7 +29,7 @@ const FormCRUD = () => {
   const userEmail = useInput("");
 
   const [data, setData] = useState(null);
-  const [flag, setFlag] = useState(0);
+  const [flag, setFlag] = useState(false);
 
   const arrInputs = [userName, userLastName, userAddress, userEmail];
 
@@ -59,8 +59,9 @@ const FormCRUD = () => {
       address: userAddress.value,
       email: userEmail.value,
     })
-      .then(() => {
-        alert("Даные сохранены!");
+      .then((response) => {
+        console.log(response)
+        // alert("Даные сохранены!");
       })
       .catch(error => {
         alert("unsuccessful,error" + error);
@@ -68,7 +69,8 @@ const FormCRUD = () => {
 
     console.log(`${userName.value} ${userLastName.value} ${userAddress.value} ${userEmail.value}`)
     console.log("Выход")
-    setFlag(flag + 1);
+    setFlag(!flag);
+    arrInputs.forEach(input => input.resetField());
   }
 
 
@@ -201,55 +203,62 @@ const FormCRUD = () => {
 
   return (
     <div className={styles.containerForm}>
-      <p className={styles.isAuth}>Example CRUD operation</p>
+      <p className={styles.title}>Example CRUD operation</p>
 
-      <form className={styles.formAuth}>
-        <h3>Please Authenticate</h3>
-        <div className={styles.row}>
-          <label>ім'я
-            <input value={userName.value} onChange={userName.onChange} type={"text"} name={"name"} id={"name"}
-                   placeholder={"Enter your first name..."}/>
-          </label>
-        </div>
-        <div className={styles.row}>
-          <label>Прізвище
-            <input value={userLastName.value} onChange={userLastName.onChange} type={"text"} name={"lastName"}
-                   id={"lastName"}
-                   placeholder={"Enter your last name..."}/>
-          </label>
-        </div>
-        <div className={styles.row}>
-          <label>Адреса
-            <input value={userAddress.value} onChange={userAddress.onChange} type={"text"} name={"address"}
-                   id={"address"}
-                   placeholder={"Enter your address..."}/>
-          </label>
-        </div>
-        <div className={styles.row}>
-          <label>E-mail
-            <input value={userEmail.value} onChange={userEmail.onChange} type={"email"} name={"email"} id={"email"}
-                   placeholder={"Enter your e-mail..."}/>
-          </label>
-        </div>
+      <div className={styles.wrapForm}>
 
-        <hr/>
-
-        <div className={styles.row}>
-          <button onClick={(e) => createUser(e)} className={styles.btnSubmit}>CREATE</button>
-          <button className={styles.btnSubmit}>SELECT</button>
-          <button className={styles.btnSubmit}>UPDATE</button>
-          <button className={styles.btnSubmit}>DELETE</button>
-        </div>
-      </form>
-
-      <div className={styles.users}>{data && data.map(user => {
-        return (
-          <div key={user.id}>
-            <p>name: {user.name} {user.last} email: {user.email} address: {user.address}</p>
-            <hr/>
+        <form className={styles.form}>
+          <h3>Please Authenticate</h3>
+          <div className={styles.row}>
+            <label>ім'я
+              <input value={userName.value} onChange={userName.onChange} type={"text"} name={"name"} id={"name"}
+                     placeholder={"Enter your first name..."}/>
+            </label>
           </div>
-        )
-      })}</div>
+          <div className={styles.row}>
+            <label>Прізвище
+              <input value={userLastName.value} onChange={userLastName.onChange} type={"text"} name={"lastName"}
+                     id={"lastName"}
+                     placeholder={"Enter your last name..."}/>
+            </label>
+          </div>
+          <div className={styles.row}>
+            <label>Адреса
+              <input value={userAddress.value} onChange={userAddress.onChange} type={"text"} name={"address"}
+                     id={"address"}
+                     placeholder={"Enter your address..."}/>
+            </label>
+          </div>
+          <div className={styles.row}>
+            <label>E-mail
+              <input value={userEmail.value} onChange={userEmail.onChange} type={"email"} name={"email"} id={"email"}
+                     placeholder={"Enter your e-mail..."}/>
+            </label>
+          </div>
+
+          <hr/>
+
+          <div className={styles.row}>
+            <button onClick={(e) => createUser(e)} className={styles.btnSubmit}>CREATE</button>
+            <button className={styles.btnSubmit}>SELECT</button>
+            <button className={styles.btnSubmit}>UPDATE</button>
+            <button className={styles.btnSubmit}>DELETE</button>
+          </div>
+        </form>
+
+        <div className={styles.users}>{data && data.map(user => {
+          return (
+            <div key={user.id}>
+              <p>name: {user.name} {user.last} email: {user.email} address: {user.address}
+                <button>update</button>
+              </p>
+              <hr/>
+            </div>
+          )
+        })}
+        </div>
+
+      </div>
 
     </div>
   );
