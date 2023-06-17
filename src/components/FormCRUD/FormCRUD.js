@@ -73,6 +73,21 @@ const FormCRUD = () => {
     arrInputs.forEach(input => input.resetField());
   }
 
+  const updateUser = async (id, address)=>{
+    const userDoc = doc(db, "users", id);
+    console.log(userDoc)
+    const newFields = {address : "somewhere"}
+
+    await updateDoc(userDoc, newFields);
+    setFlag(!flag);
+  };
+
+  const deleteUser = async (id)=>{
+    const userDoc = doc(db, "users", id);
+    await deleteDoc(userDoc);
+    setFlag(!flag);
+  };
+
 
   //ONE TIME GET FUNCTION
   // useEffect(() => {
@@ -248,9 +263,10 @@ const FormCRUD = () => {
 
         <div className={styles.users}>{data && data.map(user => {
           return (
-            <div key={user.id}>
+            <div key={user.id} id={user.id}>
               <p>name: {user.name} {user.last} email: {user.email} address: {user.address}
-                <button>update</button>
+                <button onClick={()=>{updateUser(user.id, user.address)}}>update</button>
+                <button onClick={()=>{deleteUser(user.id)}}>delete</button>
               </p>
               <hr/>
             </div>
