@@ -1,24 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import styles from "./FormCRUD.module.scss"
 import useInput from "../../hooks/useInput";
-
-import {
-  doc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  getDocs,
-  addDoc,
-} from "firebase/firestore";
+import {collection, getDocs, doc, updateDoc} from "firebase/firestore";
 import {db} from "../../firebaseConfig/fireBaseConfig";
+import styles from "./FormUpdate.module.scss";
 
-const FormCRUD = () => {
+const FormUpdate = () => {
   const userName = useInput("");
   const userLastName = useInput("");
   const userAddress = useInput("");
   const userEmail = useInput("");
 
-  const [data, setData] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  const [data, setData] = useState("");
 
   const arrInputs = [userName, userLastName, userAddress, userEmail];
 
@@ -38,47 +32,42 @@ const FormCRUD = () => {
         console.log(error)
       });
 
-  // }, [userCollectionRef]);
+    // }, [userCollectionRef]);
   }, []);
 
-  const createUser = async (e) => {
+  const updateUser = async (e) => {
     e.preventDefault();
-    await addDoc(userCollectionRef, {
+    const newFields = {
       name: userName.value,
       last: userLastName.value,
       address: userAddress.value,
       email: userEmail.value,
-    })
-      .then((response) => {
-        console.log(response.path)
-      })
-      .catch(error => {
-        alert("unsuccessful,error" + error);
-      })
+    }
 
-    console.log(`${userName.value} ${userLastName.value} ${userAddress.value} ${userEmail.value}`)
-    arrInputs.forEach(input => input.setField(""));
-  }
-
-  const updateUser = async (id, address) => {
-    const newFields = {address: "somewhere"}
     try {
-      const userDoc = doc(db, "users", id);
+      const userDoc = doc(db, "users", userId);
       await updateDoc(userDoc, newFields);
     } catch (error) {
+      alert(error)
       console.log(error);
     }
   };
 
+  const viewUser = (id) => {
+    const user = data.filter(user => user.id === id)[0];
+    console.log(user);
 
-  const deleteUser = async (id) => {
-    const userDoc = doc(db, "users", id);
-    await deleteDoc(userDoc);
-  };
+    userName.setField(user.name);
+    userLastName.setField(user.last);
+    userAddress.setField(user.address);
+    userEmail.setField(user.email);
+    setUserId(id)
+  }
+
 
   return (
     <div className={styles.containerForm}>
-      <p className={styles.title}>Example CRUD operation</p>
+      <p className={styles.title}>Example UPDATE operation</p>
 
       <div className={styles.wrapForm}>
 
@@ -114,10 +103,7 @@ const FormCRUD = () => {
           <hr/>
 
           <div className={styles.row}>
-            <button onClick={(e) => createUser(e)} className={styles.btnSubmit}>CREATE</button>
-            <button className={styles.btnSubmit}>SELECT</button>
-            <button className={styles.btnSubmit}>UPDATE</button>
-            <button className={styles.btnSubmit}>DELETE</button>
+            <button onClick={(e)=>updateUser(e)} className={styles.btnSubmit}>UPDATE</button>
           </div>
         </form>
 
@@ -126,12 +112,8 @@ const FormCRUD = () => {
             <div key={user.id} id={user.id}>
               <p>name: {user.name} {user.last} email: {user.email} address: {user.address}
                 <button onClick={() => {
-                  updateUser(user.id, user.address)
-                }}>update
-                </button>
-                <button onClick={() => {
-                  deleteUser(user.id)
-                }}>delete
+                  viewUser(user.id)
+                }}>view
                 </button>
               </p>
               <hr/>
@@ -146,4 +128,4 @@ const FormCRUD = () => {
   );
 };
 
-export default FormCRUD;
+export default FormUpdate;

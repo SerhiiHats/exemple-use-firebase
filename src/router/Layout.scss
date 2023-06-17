@@ -19,10 +19,12 @@
       width: $size * 20;
       background-color: $colorBg0;
       min-height: calc(100vh - $heightHeader - $heightFooter);
+      display: flex;
+      flex-direction: column;
 
       & > a {
         color: $colorDefault;
-        margin: $size * 5;
+        margin:  $size 0  $size $size * 4;
         font-size: $size * 2;
         text-decoration: none;
 

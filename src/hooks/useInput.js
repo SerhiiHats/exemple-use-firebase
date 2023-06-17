@@ -7,11 +7,11 @@ export default function useInput (initialValue){
     setValue(e.target.value);
   }
 
-  const resetField = () =>{
-    setValue("");
+  const setField = (value) =>{
+    setValue(value);
   }
 
   return {
-    value, onChange, resetField
+    value, onChange, setField
   }
 }

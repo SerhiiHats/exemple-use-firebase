@@ -11,6 +11,7 @@ const Layout = () => {
       <div className={"wrapMain"}>
         <nav className={"nav"}>
           <NavLink to={"/"}>Home</NavLink>
+          <NavLink to={"/update"}>Update</NavLink>
         </nav>
         <main className={"main"}>
           <Outlet/>
