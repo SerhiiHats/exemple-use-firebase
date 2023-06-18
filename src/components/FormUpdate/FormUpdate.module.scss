@@ -82,12 +82,17 @@
     .users {
       font-size: 15px;
       color: black;
-      text-align: center;
       margin: 0 auto 0 auto;
 
-      button{
-        margin-left: $size;
+      .user{
+        display: flex;
+        justify-content: space-between;
+
+        button{
+          margin-left: $size;
+        }
       }
+
     }
   }
 }

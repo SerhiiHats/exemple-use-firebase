@@ -14,15 +14,23 @@ const FormUpdate = () => {
 
   const [data, setData] = useState("");
 
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
   const arrInputs = [userName, userLastName, userAddress, userEmail];
 
   const userCollectionRef = collection(db, "users");
 
+  const [count, setCount] = useState(1);
+
   useEffect(() => {
+
+    setCount(count + 1);
     const getUsers = async () => {
       await getDocs(userCollectionRef)
         .then(data => {
           setData(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+          console.log("operation UPDATE getUsers: " + count + " count");
+          console.log(data);
         })
     }
 
@@ -31,9 +39,7 @@ const FormUpdate = () => {
         alert("unsuccessful,error" + error);
         console.log(error)
       });
-
-    // }, [userCollectionRef]);
-  }, []);
+  }, [shouldUpdate]);
 
   const updateUser = async (e) => {
     e.preventDefault();
@@ -46,7 +52,11 @@ const FormUpdate = () => {
 
     try {
       const userDoc = doc(db, "users", userId);
-      await updateDoc(userDoc, newFields);
+      await updateDoc(userDoc, newFields)
+        .then(response => {
+          console.log(response);
+          setShouldUpdate(!shouldUpdate);
+        })
     } catch (error) {
       alert(error)
       console.log(error);
@@ -72,7 +82,7 @@ const FormUpdate = () => {
       <div className={styles.wrapForm}>
 
         <form className={styles.form}>
-          <h3>Please Authenticate</h3>
+          <h3>Form for update</h3>
           <div className={styles.row}>
             <label>ім'я
               <input value={userName.value} onChange={userName.onChange} type={"text"} name={"name"} id={"name"}
@@ -103,18 +113,16 @@ const FormUpdate = () => {
           <hr/>
 
           <div className={styles.row}>
-            <button onClick={(e)=>updateUser(e)} className={styles.btnSubmit}>UPDATE</button>
+            <button onClick={(e) => updateUser(e)} className={styles.btnSubmit}>UPDATE</button>
           </div>
         </form>
 
         <div className={styles.users}>{data && data.map(user => {
           return (
             <div key={user.id} id={user.id}>
-              <p>name: {user.name} {user.last} email: {user.email} address: {user.address}
-                <button onClick={() => {
-                  viewUser(user.id)
-                }}>view
-                </button>
+              <p className={styles.user}>
+                <span>name: {user.name} {user.last} email: {user.email} address: {user.address}</span>
+                <span><button onClick={() => {viewUser(user.id)}}>view</button></span>
               </p>
               <hr/>
             </div>
