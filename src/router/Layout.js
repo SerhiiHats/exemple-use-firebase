@@ -12,6 +12,7 @@ const Layout = () => {
         <nav className={"nav"}>
           <NavLink to={"/"}>Home</NavLink>
           <NavLink to={"/update"}>Update</NavLink>
+          <NavLink to={"/createRestaurants"}>Create Restaurants</NavLink>
         </nav>
         <main className={"main"}>
           <Outlet/>
