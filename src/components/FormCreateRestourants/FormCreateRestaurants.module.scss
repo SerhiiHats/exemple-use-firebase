@@ -79,18 +79,53 @@
       }
     }
 
-    .users {
+    .listProduct {
       font-size: 15px;
       color: black;
       margin: 0 auto 0 auto;
 
-      .user{
+      .product {
         display: flex;
         justify-content: space-between;
 
-        button{
-          margin-left: $size;
+        .column {
+          width: 200px;
+
+
+          &:first-child {
+            width: 400px;
+            display: flex;
+            border-right: 1px solid lightgray;
+
+            img {
+              width: 35%;
+            }
+
+            p {
+              margin-left: 10px;
+            }
+          }
+
+          &:nth-child(2) {
+            margin-left: 10px;
+          }
+
+
+          &:last-child {
+            width: 75px;
+            border-left: 1px solid lightgray;
+
+            p{
+              margin-left: 10px;
+            }
+            //button {
+            //  margin-left: $size;
+            //}
+
+          }
         }
+
+
       }
 
     }
