@@ -47,6 +47,8 @@ const FormCreateRestaurants = () => {
           console.log("operation getProducts: " + count + " count");
           console.log(data);
         })
+
+
     }, [shouldUpdate]);
 
 
