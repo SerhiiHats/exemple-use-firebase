@@ -45,7 +45,7 @@ const FormCreateRestaurants = () => {
     };
 
     const deleteProduct = async (id) => {
-      const product = doc(db, "burger_king", id)
+      const product = doc(db, "restaurants", "burger_king", "products", id)
       await deleteDoc(product)
       getProducts()
         .then(() => {
@@ -75,6 +75,7 @@ const FormCreateRestaurants = () => {
         .then((response) => {
           // setShouldUpdate(!shouldUpdate);
           console.log(response)
+          // createProduct(e);
         })
         .catch(error => {
           alert("unsuccessful,error" + error);
