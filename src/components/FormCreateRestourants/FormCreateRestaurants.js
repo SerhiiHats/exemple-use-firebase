@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import useInput from "../../hooks/useInput";
-import {collection, addDoc, doc, getDocs, collectionGroup} from "firebase/firestore";
+import {collection, addDoc, doc, getDocs, deleteDoc, collectionGroup} from "firebase/firestore";
 import {db} from "../../firebaseConfig/fireBaseConfig";
 import styles from "./FormCreateRestaurants.module.scss";
 
@@ -20,41 +20,49 @@ const FormCreateRestaurants = () => {
 
     // const collectionRef = collection(db, "restaurants");
 
-    const [count, setCount] = useState(1);
+    const restaurantDocRef = doc(db, "restaurants", "burger_king");
+    const productsCollectionRef = collection(restaurantDocRef, "products");
 
-    useEffect(() => {
-      setCount(count + 1);
-      const restaurantDocRef = doc(db, "restaurants", "burger_king");
-      const productsCollectionRef = collection(restaurantDocRef, "products");
-      const getProducts = async () => {
-        await getDocs(productsCollectionRef)
-          .then(data => {
 
-            //найдем все пути в ресторанах т.е. все рестораны
-            console.log(data.query._path.segments[1])
-
-            setData(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
-          })
-      }
-
-      getProducts()
-        .catch(error => {
+    const getProducts = async () => {
+      await getDocs(productsCollectionRef)
+        .then(data => {
+          //найдем все пути в ресторанах т.е. все рестораны
+          // console.log(data.query._path.segments[1])
+          setData(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+          console.log("then operation getProducts");
+        })
+        .catch((error) => {
           alert("unsuccessful,error" + error);
           console.log(error)
+          console.log("error operation getProducts" + error);
         })
         .finally(() => {
-          console.log(data)
-          console.log("operation getProducts: " + count + " count");
-          console.log(data);
+          console.log("finally operation getProducts");
         })
 
 
-    }, [shouldUpdate]);
+    };
+
+    const deleteProduct = async (id) => {
+      const product = doc(db, "burger_king", id)
+      await deleteDoc(product)
+      getProducts()
+        .then(() => {
+          console.log("delete Ok?")
+        })
+    }
+
+    useEffect(() => {
+      getProducts()
+        .then(() => {
+          console.log("Ok")
+        })
+    }, []);
 
 
     const createProduct = async (e) => {
       e.preventDefault();
-
       const restaurantDocRef = doc(db, "restaurants", "burger_king");
       const productsCollectionRef = collection(restaurantDocRef, "products");
 
@@ -65,7 +73,8 @@ const FormCreateRestaurants = () => {
         price: productPrice.value,
       })
         .then((response) => {
-          setShouldUpdate(!shouldUpdate);
+          // setShouldUpdate(!shouldUpdate);
+          console.log(response)
         })
         .catch(error => {
           alert("unsuccessful,error" + error);
@@ -137,6 +146,7 @@ const FormCreateRestaurants = () => {
                       <p>{product.price}</p>
                       <p>
                         <button>Edit</button>
+                        <button onClick={() => deleteProduct(product.id)}>Delete</button>
                       </p>
                     </div>
                   </div>
