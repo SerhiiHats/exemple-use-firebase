@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import useInput from "../../hooks/useInput";
-import {collection, addDoc, doc, getDocs, deleteDoc, collectionGroup} from "firebase/firestore";
+import {collection, addDoc, doc, getDocs, deleteDoc, collectionGroup, getDoc} from "firebase/firestore";
 import {db} from "../../firebaseConfig/fireBaseConfig";
 import styles from "./FormCreateRestaurants.module.scss";
 
@@ -57,7 +57,22 @@ const FormCreateRestaurants = () => {
       getProducts()
         .then(() => {
           console.log("Ok")
-        })
+        });
+
+
+      const getAll = async () => {
+        const restaurantDocRef = collection(db, "restaurants")
+
+        await getDocs(restaurantDocRef)
+          .then(data => {
+            console.log(data);
+            console.log(restaurantDocRef)
+          })
+      }
+
+      getAll()
+
+
     }, []);
 
 
